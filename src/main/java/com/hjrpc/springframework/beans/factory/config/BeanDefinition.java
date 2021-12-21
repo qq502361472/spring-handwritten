@@ -1,8 +1,16 @@
 package com.hjrpc.springframework.beans.factory.config;
 
+import com.hjrpc.springframework.beans.PropertyValues;
+
 public class BeanDefinition {
 
     private Class beanClass;
+    private PropertyValues propertyValues;
+
+    public BeanDefinition(Class beanClass, PropertyValues propertyValues) {
+        this.beanClass = beanClass;
+        this.propertyValues = propertyValues;
+    }
 
     public BeanDefinition(Class beanClass) {
         this.beanClass = beanClass;
@@ -14,5 +22,13 @@ public class BeanDefinition {
 
     public void setBeanClass(Class beanClass) {
         this.beanClass = beanClass;
+    }
+
+    public PropertyValues getPropertyValues() {
+        return propertyValues;
+    }
+
+    public void setPropertyValues(PropertyValues propertyValues) {
+        this.propertyValues = propertyValues;
     }
 }
