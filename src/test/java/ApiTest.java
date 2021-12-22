@@ -1,28 +1,33 @@
+import bean.UserDao;
 import bean.UserService;
+import com.hjrpc.springframework.beans.PropertyValue;
+import com.hjrpc.springframework.beans.PropertyValues;
 import com.hjrpc.springframework.beans.factory.config.BeanDefinition;
+import com.hjrpc.springframework.beans.factory.config.BeanReference;
 import com.hjrpc.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.junit.Test;
 
 public class ApiTest {
 
     @Test
-    public void testBeanFactory(){
+    public void testBeanFactory() {
         // 初始化 BeanFactory
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
-        // 构建 BeanDefinition 信息
-        BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
+        String beanName = "userDao";
+        beanFactory.registerBeanDefinition(beanName, new BeanDefinition(UserDao.class));
 
-        // 注册 BeanDefinition 信息
-        beanFactory.registerBeanDefinition("userService",beanDefinition);
+        // 封装 userService bean定义信息
+        PropertyValues propertyValues = new PropertyValues();
+        propertyValues.addPropertyValue(new PropertyValue("userId", "10002"));
+        propertyValues.addPropertyValue(new PropertyValue(beanName, new BeanReference(beanName)));
+        BeanDefinition beanDefinition = new BeanDefinition(UserService.class,propertyValues);
 
-        // 第一次获取单例bean
-        UserService userService = (UserService) beanFactory.getBean("userService","张三");
+        // 注册
+        beanFactory.registerBeanDefinition("userService", beanDefinition);
+
+        UserService userService = (UserService) beanFactory.getBean("userService");
         userService.queryUser();
 
-        // 第二次获取单例bean
-        UserService userService2 = (UserService) beanFactory.getBean("userService");
-        userService2.queryUser();
-        System.out.println("end");
     }
 }

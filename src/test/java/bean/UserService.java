@@ -1,7 +1,9 @@
 package bean;
 
 public class UserService {
+    UserDao userDao;
     String name;
+    String userId;
 
     public UserService() {
     }
@@ -11,6 +13,7 @@ public class UserService {
     }
 
     public void queryUser() {
-        System.out.println("查询用户信息:" + name);
+        String userName = userDao.queryUserName(userId);
+        System.out.println("查询用户信息:" + userName);
     }
 }
