@@ -10,7 +10,7 @@ public class DefaultResourceLoader implements ResourceLoader {
     public Resource getResource(String location) {
         Assert.notNull(location, "Location must not be null");
         if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-            return new ClassPathResource(location);
+            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         }
 
         try {
