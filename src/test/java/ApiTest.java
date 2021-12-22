@@ -1,11 +1,7 @@
-import bean.UserDao;
 import bean.UserService;
 import cn.hutool.core.io.IoUtil;
-import com.hjrpc.springframework.beans.PropertyValue;
-import com.hjrpc.springframework.beans.PropertyValues;
-import com.hjrpc.springframework.beans.factory.config.BeanDefinition;
-import com.hjrpc.springframework.beans.factory.config.BeanReference;
 import com.hjrpc.springframework.beans.factory.support.DefaultListableBeanFactory;
+import com.hjrpc.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import com.hjrpc.springframework.core.io.DefaultResourceLoader;
 import com.hjrpc.springframework.core.io.Resource;
 import org.junit.Before;
@@ -39,23 +35,22 @@ public class ApiTest {
     }
 
     @Test
+    public void testUrl() throws IOException {
+        Resource resource = defaultResourceLoader.getResource("https://gitee.com/HuJianMonn/web-test");
+        InputStream inputStream = resource.getInputStream();
+        String content = IoUtil.readUtf8(inputStream);
+        System.out.println(content);
+    }
+
+    @Test
     public void testBeanFactory() {
         // 初始化 BeanFactory
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
-        String beanName = "userDao";
-        beanFactory.registerBeanDefinition(beanName, new BeanDefinition(UserDao.class));
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        reader.loadBeanDefinitions("classpath:spring.xml");
 
-        // 封装 userService bean定义信息
-        PropertyValues propertyValues = new PropertyValues();
-        propertyValues.addPropertyValue(new PropertyValue("userId", "10002"));
-        propertyValues.addPropertyValue(new PropertyValue(beanName, new BeanReference(beanName)));
-        BeanDefinition beanDefinition = new BeanDefinition(UserService.class, propertyValues);
-
-        // 注册
-        beanFactory.registerBeanDefinition("userService", beanDefinition);
-
-        UserService userService = (UserService) beanFactory.getBean("userService");
+        UserService userService = beanFactory.getBean("userService", UserService.class);
         userService.queryUser();
 
     }
