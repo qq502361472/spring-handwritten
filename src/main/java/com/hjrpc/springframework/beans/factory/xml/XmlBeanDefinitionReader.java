@@ -100,4 +100,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         Resource resource = this.getResourceLoader().getResource(location);
         loadBeanDefinitions(resource);
     }
+
+    @Override
+    public void loadBeanDefinitions(String... configLocations) {
+        for (String location : configLocations) {
+            loadBeanDefinitions(location);
+        }
+    }
 }

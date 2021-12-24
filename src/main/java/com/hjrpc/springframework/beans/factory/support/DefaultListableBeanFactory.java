@@ -3,6 +3,7 @@ package com.hjrpc.springframework.beans.factory.support;
 import com.hjrpc.springframework.beans.BeansException;
 import com.hjrpc.springframework.beans.factory.ConfigurableListableBeanFactory;
 import com.hjrpc.springframework.beans.factory.config.BeanDefinition;
+import com.hjrpc.springframework.beans.factory.config.BeanPostProcessor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
         if (beanDefinition == null) throw new BeansException("No bean named '" + beanName + "' is defined");
         return beanDefinition;
+    }
+
+    @Override
+    public void preInstantiateSingletons() throws BeansException {
+        beanDefinitionMap.keySet().forEach(this::getBean);
     }
 
     @Override
