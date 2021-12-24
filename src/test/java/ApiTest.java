@@ -2,6 +2,7 @@ import bean.UserService;
 import cn.hutool.core.io.IoUtil;
 import com.hjrpc.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.hjrpc.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import com.hjrpc.springframework.context.support.ClassPathXmlApplicationContext;
 import com.hjrpc.springframework.core.io.DefaultResourceLoader;
 import com.hjrpc.springframework.core.io.Resource;
 import org.junit.Before;
@@ -45,13 +46,9 @@ public class ApiTest {
     @Test
     public void testBeanFactory() {
         // 初始化 BeanFactory
-        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
-        reader.loadBeanDefinitions("classpath:spring.xml");
-
-        UserService userService = beanFactory.getBean("userService", UserService.class);
-        userService.queryUser();
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        UserService userService = applicationContext.getBean("userService", UserService.class);
+        userService.queryUserInfo();
 
     }
 }

@@ -36,8 +36,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
         // 执行 BeanPostProcessor Before 处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
-
-
+        
         // TODO 调用 spring的init方法
         invokeInitMethods(beanName, wrappedBean, beanDefinition);
 
