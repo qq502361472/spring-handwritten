@@ -47,6 +47,8 @@ public class ApiTest {
     public void testBeanFactory() {
         // 初始化 BeanFactory
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        // 注册销毁对象钩子
+        applicationContext.registerShutdownHook();
         UserService userService = applicationContext.getBean("userService", UserService.class);
         userService.queryUserInfo();
 

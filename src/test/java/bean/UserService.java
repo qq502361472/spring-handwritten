@@ -1,6 +1,9 @@
 package bean;
 
-public class UserService {
+import com.hjrpc.springframework.beans.factory.DisposableBean;
+import com.hjrpc.springframework.beans.factory.InitializingBean;
+
+public class UserService implements InitializingBean, DisposableBean {
     private String userId;
     private String company;
     private String location;
@@ -44,5 +47,15 @@ public class UserService {
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("UserService destroy....");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("UserService afterPropertiesSet....");
     }
 }

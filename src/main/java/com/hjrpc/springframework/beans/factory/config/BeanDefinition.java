@@ -7,6 +7,12 @@ public class BeanDefinition {
     private Class beanClass;
     private PropertyValues propertyValues;
 
+    // 初始化方法
+    private String initMethod;
+
+    // 销毁方法
+    private String destroyMethod;
+
     public BeanDefinition(Class beanClass, PropertyValues propertyValues) {
         this.beanClass = beanClass;
         this.propertyValues = propertyValues != null ? propertyValues : new PropertyValues();
@@ -31,5 +37,21 @@ public class BeanDefinition {
 
     public void setPropertyValues(PropertyValues propertyValues) {
         this.propertyValues = propertyValues;
+    }
+
+    public String getInitMethod() {
+        return initMethod;
+    }
+
+    public void setInitMethod(String initMethod) {
+        this.initMethod = initMethod;
+    }
+
+    public String getDestroyMethod() {
+        return destroyMethod;
+    }
+
+    public void setDestroyMethod(String destroyMethod) {
+        this.destroyMethod = destroyMethod;
     }
 }
