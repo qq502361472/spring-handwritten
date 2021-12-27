@@ -4,6 +4,7 @@ import com.hjrpc.springframework.beans.BeansException;
 import com.hjrpc.springframework.beans.factory.config.BeanDefinition;
 import com.hjrpc.springframework.beans.factory.config.BeanPostProcessor;
 import com.hjrpc.springframework.beans.factory.config.ConfigurableBeanFactory;
+import com.hjrpc.springframework.util.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.List;
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
+
+    private ClassLoader beanClassLoader = ClassUtil.getDefaultClassLoader();
 
     @Override
     public Object getBean(String beanName) throws BeansException {
@@ -49,5 +52,13 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return this.beanPostProcessors;
+    }
+
+    public ClassLoader getBeanClassLoader() {
+        return beanClassLoader;
+    }
+
+    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+        this.beanClassLoader = beanClassLoader;
     }
 }
