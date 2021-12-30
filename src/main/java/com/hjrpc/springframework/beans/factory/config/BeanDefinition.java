@@ -3,6 +3,9 @@ package com.hjrpc.springframework.beans.factory.config;
 import com.hjrpc.springframework.beans.PropertyValues;
 
 public class BeanDefinition {
+    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+
+    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
     private Class beanClass;
     private PropertyValues propertyValues;
