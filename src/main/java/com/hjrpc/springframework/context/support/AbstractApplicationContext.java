@@ -4,34 +4,70 @@ import com.hjrpc.springframework.beans.BeansException;
 import com.hjrpc.springframework.beans.factory.ConfigurableListableBeanFactory;
 import com.hjrpc.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import com.hjrpc.springframework.beans.factory.config.BeanPostProcessor;
+import com.hjrpc.springframework.context.ApplicationEvent;
+import com.hjrpc.springframework.context.ApplicationListener;
 import com.hjrpc.springframework.context.ConfigurableApplicationContext;
+import com.hjrpc.springframework.context.event.ApplicationEventMulticaster;
+import com.hjrpc.springframework.context.event.ContextRefreshedEvent;
+import com.hjrpc.springframework.context.event.SimpleApplicationEventMulticaster;
 import com.hjrpc.springframework.core.io.DefaultResourceLoader;
 
+import java.util.Collection;
 import java.util.Map;
 
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
-
+    public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
+    private ApplicationEventMulticaster applicationEventMulticaster;
 
     @Override
     public void refresh() throws BeansException {
-        // 创建 BeanFactory，并加载 BeanDefinition
+        // 1. 创建 BeanFactory，并加载 BeanDefinition
         refreshBeanFactory();
 
-        // 获取 BeanFactory
+        // 2. 获取 BeanFactory
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
-        // 手动添加 ApplicationContextAwareProcessor
+        // 3. 手动添加 ApplicationContextAwareProcessor
         beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
-        // 在 Bean 实例化之前执行 BeanFactoryPostProcessor 增强
+        // 4. 在 Bean 实例化之前执行 BeanFactoryPostProcessor 增强
         invokeBeanFactoryPostProcessors(beanFactory);
 
-        // BeanPostProcessor 注册操作
+        // 5. BeanPostProcessor 注册操作
         registerBeanPostProcessor(beanFactory);
 
-        // 提前实例化单例 Bean 对象
+        // 6. 初始化事件发布者
+        initApplicationEventMulticaster();
+
+        // 7. 注册事件监听器
+        registerListeners();
+
+        // 8.  提前实例化单例 Bean 对象
         beanFactory.preInstantiateSingletons();
 
+        // 9. 发布容器刷新完成事件
+        finishRefresh();
+    }
+
+    private void registerListeners() {
+        Collection<ApplicationListener> applicationListeners = getBeansOfType(ApplicationListener.class).values();
+        for (ApplicationListener listener : applicationListeners) {
+            applicationEventMulticaster.addApplicationListener(listener);
+        }
+    }
+    private void finishRefresh() {
+        publishEvent(new ContextRefreshedEvent(this));
+    }
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
+        applicationEventMulticaster.multicastEvent(event);
+    }
+
+    private void initApplicationEventMulticaster() {
+        ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+        applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+        beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, applicationEventMulticaster);
     }
 
     private void registerBeanPostProcessor(ConfigurableListableBeanFactory beanFactory) {
