@@ -15,6 +15,9 @@ import com.hjrpc.springframework.beans.factory.config.BeanReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+/**
+ * @author YCC0142
+ */
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
     private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
 
@@ -37,11 +40,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 注册实现 DisposableBean 和配置了 destroy-method 方法的 bean
         registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
 
-        addSingleton(beanName, bean);
+        if (beanDefinition.isSingleton()) {
+            addSingleton(beanName, bean);
+        }
         return bean;
     }
 
     private void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // 非单例bean不需要销毁，因为都是使用才创建的
+        if (!beanDefinition.isSingleton()) {
+            return;
+        }
         if (bean instanceof DisposableBean || StrUtil.isNotBlank(beanDefinition.getDestroyMethod())) {
             registerDisposableBean(beanName, new DisposableBeanAdapter(bean, beanName, beanDefinition));
         }
@@ -128,7 +137,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     BeanReference beanReference = (BeanReference) value;
                     value = getBean(beanReference.getBeanName());
                 }
-
                 BeanUtil.setFieldValue(bean, name, value);
             }
         } catch (BeansException e) {

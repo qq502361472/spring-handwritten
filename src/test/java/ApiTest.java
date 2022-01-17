@@ -49,8 +49,14 @@ public class ApiTest {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
         // 注册销毁对象钩子
         applicationContext.registerShutdownHook();
-        UserService userService = applicationContext.getBean("userService", UserService.class);
-        userService.queryUserInfo();
+        UserService userService1 = applicationContext.getBean("userService", UserService.class);
+        UserService userService2 = applicationContext.getBean("userService", UserService.class);
+
+        System.out.println(userService1);
+        System.out.println(userService2);
+
+        userService1.queryUserInfo();
+        userService2.queryUserInfo();
 
     }
 }
